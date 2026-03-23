@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RD Realty Group - Find Your Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+<style>
+  :root {
+    --primary: #1a2744;
+    --accent: #c9a96e;
+    --accent-light: #e8d5b0;
+    --light-bg: #f8f6f2;
+    --text-muted: #7a7a6e;
+    --white: #ffffff;
+    --chat-bg: #f4f1ec;
+    --chat-radius: 18px;
+    --shadow-soft: 0 8px 40px rgba(26,39,68,0.12);
+    --shadow-strong: 0 20px 60px rgba(26,39,68,0.22);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--light-bg);
+    color: var(--primary);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  .site-nav {
+    position: fixed; top: 0; width: 100%; z-index: 900;
+    background: rgba(248,246,242,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(201,169,110,0.2);
+  }
+  .site-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem; color: var(--primary); text-decoration: none;
+  }
+  .site-brand:hover,
+  .site-brand:focus {
+    color: var(--primary);
+  }
+  .site-brand svg { width: 38px; height: 38px; }
+  .site-nav .navbar-nav {
+    align-items: flex-start;
+  }
+  .site-nav .nav-link {
+    font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-muted); transition: color .2s;
+    font-weight: 500;
+  }
+  .site-nav .nav-link:hover,
+  .site-nav .nav-link:focus,
+  .site-nav .nav-link.show {
+    color: var(--accent);
+  }
+  .site-nav .navbar-toggler {
+    color: var(--primary);
+  }
+  .site-nav .navbar-toggler:focus {
+    box-shadow: none;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    background: linear-gradient(160deg, #1a2744 0%, #2c3e6b 50%, #1a2744 100%);
+    padding-top: 80px;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a96e' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: .5;
+  }
+  .hero-inner { position: relative; z-index: 2; }
+  .hero-eyebrow {
+    font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); font-weight: 600;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 5vw, 4.2rem);
+    line-height: 1.12;
+    max-width: 680px;
+  }
+  .hero h1 em { color: var(--accent); font-style: italic; }
+  .hero p {
+    font-size: 1.05rem; color: rgba(255,255,255,0.72);
+    max-width: 500px; line-height: 1.7;
+  }
+  .btn-gold {
+    background: var(--accent); color: var(--primary);
+    padding: 14px 32px; border-radius: 6px;
+    font-weight: 700; font-size: 0.88rem; letter-spacing: 0.06em;
+    text-transform: uppercase; border: none; cursor: pointer;
+    transition: all .2s; text-decoration: none;
+  }
+  .btn-gold:hover { background: #d4b47a; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,169,110,0.4); color: var(--primary); }
+  .btn-gold .material-icons { font-size: 18px; }
+  .btn-outline-white {
+    background: transparent; color: white;
+    padding: 14px 32px; border-radius: 6px;
+    font-weight: 600; font-size: 0.88rem; letter-spacing: 0.06em;
+    text-transform: uppercase; border: 1.5px solid rgba(255,255,255,0.4); cursor: pointer;
+    transition: all .2s; text-decoration: none;
+  }
+  .btn-outline-white:hover { border-color: var(--accent); color: var(--accent); }
+
+  .hero-stats {
+    position: absolute; bottom: 50px; right: 60px; z-index: 2;
+  }
+  .stat { text-align: right; color: white; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--accent); }
+  .stat-label { font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; opacity: .6; }
+
+  /* ── AGENTS ── */
+  .section-label {
+    font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); font-weight: 600;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 3vw, 2.6rem); color: var(--primary);
+    line-height: 1.25;
+  }
+  .section-copy {
+    max-width: 520px;
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+  .process-copy {
+    font-size: 0.9rem;
+    line-height: 1.8;
+  }
+
+  .agent-card {
+    background: white;
+    border-radius: 16px;
+    padding: 28px 24px;
+    box-shadow: 0 2px 20px rgba(26,39,68,0.07);
+    transition: all .25s;
+    height: 100%;
+    border: 1.5px solid transparent;
+    position: relative; overflow: hidden;
+  }
+  .agent-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--accent); transform: scaleX(0); transform-origin: left;
+    transition: transform .3s;
+  }
+  .agent-card:hover { box-shadow: var(--shadow-soft); border-color: var(--accent-light); transform: translateY(-4px); }
+  .agent-card:hover::before { transform: scaleX(1); }
+  .agent-avatar {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), #2c3e6b);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: var(--accent); font-size: 1.1rem;
+    margin-bottom: 14px; letter-spacing: 0.05em;
+  }
+  .agent-name { font-weight: 700; font-size: 1rem; color: var(--primary); margin-bottom: 4px; }
+  .agent-role { font-size: 0.75rem; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+  .agent-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; }
+
+  /* ── HOW IT WORKS ── */
+  .step-num {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--primary); color: var(--accent);
+    font-weight: 700; font-size: 1rem; font-family: 'Playfair Display', serif;
+  }
+  .step-text h5 { font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; color: var(--primary); }
+  .step-text p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 0; }
+
+  /* ── FAB ── */
+  .fab-wrapper {
+    position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+  }
+  .fab-btn {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 6px 28px rgba(26,39,68,0.45);
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .25s; position: relative;
+    color: var(--accent);
+  }
+  .fab-btn:hover { background: #243159; transform: scale(1.07); }
+  .fab-btn .material-icons { font-size: 28px; transition: transform .3s; }
+  .fab-btn.open .material-icons { transform: rotate(45deg); }
+  .fab-label {
+    background: var(--primary); color: white;
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em;
+    padding: 6px 14px; border-radius: 20px;
+    white-space: nowrap; pointer-events: none;
+    box-shadow: 0 3px 12px rgba(26,39,68,0.25);
+    animation: fadeLabel .3s ease;
+  }
+  .fab-pulse {
+    position: absolute; top: 0; right: 0;
+    width: 18px; height: 18px; background: #4caf50;
+    border-radius: 50%; border: 2px solid var(--light-bg);
+  }
+  .fab-pulse::after {
+    content: ''; position: absolute; inset: -3px;
+    border-radius: 50%; border: 2px solid #4caf50;
+    animation: pulse 1.8s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:.7;transform:scale(1)} 50%{opacity:0;transform:scale(1.8)} }
+  @keyframes fadeLabel { from{opacity:0;transform:translateX(10px)} to{opacity:1;transform:none} }
+
+  /* ── CHAT PANEL ── */
+  .chat-panel {
+    position: fixed; bottom: 108px; right: 28px; z-index: 9998;
+    width: 380px; max-height: 600px;
+    background: white; border-radius: var(--chat-radius);
+    box-shadow: var(--shadow-strong);
+    overflow: hidden;
+    transform: scale(0.92) translateY(20px);
+    opacity: 0; pointer-events: none;
+    transform-origin: bottom right;
+    transition: all .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .chat-panel.active {
+    transform: scale(1) translateY(0);
+    opacity: 1; pointer-events: all;
+  }
+
+  .chat-header {
+    background: var(--primary);
+  }
+  .chat-header-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(201,169,110,0.2);
+  }
+  .chat-header-name { color: white; font-weight: 700; font-size: 0.95rem; }
+  .chat-header-status {
+    color: #4caf50; font-size: 0.72rem; font-weight: 500;
+  }
+  .status-dot { width: 6px; height: 6px; background: #4caf50; border-radius: 50%; }
+  .chat-header-close {
+    background: none; border: none; cursor: pointer;
+    color: rgba(255,255,255,0.6); transition: color .2s;
+  }
+  .chat-header-close:hover { color: white; }
+
+  .chat-agent-strip {
+    background: var(--chat-bg);
+    font-size: 0.72rem; color: var(--text-muted);
+    border-bottom: 1px solid rgba(26,39,68,0.06);
+  }
+  .chat-agent-strip strong { color: var(--primary); }
+
+  .chat-messages {
+    flex: 1; overflow-y: auto;
+    background: var(--chat-bg);
+    scroll-behavior: smooth;
+  }
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: rgba(26,39,68,0.15); border-radius: 4px; }
+
+  .msg { display: flex; gap: 8px; align-items: flex-end; }
+  .msg.user { flex-direction: row-reverse; }
+  .msg-bubble {
+    max-width: 78%; padding: 10px 14px;
+    border-radius: 16px; font-size: 0.84rem; line-height: 1.55;
+  }
+  .msg.bot .msg-bubble {
+    background: white; color: var(--primary);
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 2px 8px rgba(26,39,68,0.07);
+  }
+  .msg.user .msg-bubble {
+    background: var(--primary); color: white;
+    border-bottom-right-radius: 4px;
+  }
+  .msg-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--primary); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem; font-weight: 700; color: var(--accent);
+    letter-spacing: 0.02em;
+  }
+  .msg-time { font-size: 0.65rem; color: var(--text-muted); margin-top: 2px; text-align: right; }
+  .msg.user .msg-time { text-align: left; }
+
+  /* typing indicator */
+  .typing-indicator {
+    display: flex; gap: 5px; padding: 12px 16px;
+    background: white; border-radius: 16px; border-bottom-left-radius: 4px;
+    width: fit-content; box-shadow: 0 2px 8px rgba(26,39,68,0.07);
+  }
+  .typing-dot {
+    width: 7px; height: 7px; background: var(--accent);
+    border-radius: 50%; animation: typingBounce 1.2s infinite;
+  }
+  .typing-dot:nth-child(2) { animation-delay: .2s; }
+  .typing-dot:nth-child(3) { animation-delay: .4s; }
+  @keyframes typingBounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+  /* quick replies */
+  .quick-replies {
+    background: var(--chat-bg);
+  }
+  .quick-reply-btn {
+    background: white; border: 1.5px solid var(--accent-light);
+    color: var(--primary); font-size: 0.75rem; font-weight: 600;
+    padding: 6px 12px; border-radius: 20px; cursor: pointer;
+    transition: all .18s; white-space: nowrap;
+  }
+  .quick-reply-btn:hover { background: var(--accent); color: var(--primary); border-color: var(--accent); }
+
+  /* agent handoff card */
+  .handoff-card {
+    background: linear-gradient(135deg, var(--primary), #2c3e6b);
+    border-radius: 12px; padding: 14px;
+    color: white; margin-top: 4px;
+  }
+  .handoff-card .hc-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 6px; }
+  .handoff-card .hc-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 2px; }
+  .handoff-card .hc-role { font-size: 0.75rem; opacity: .75; margin-bottom: 10px; }
+  .handoff-card .hc-btn {
+    background: var(--accent); color: var(--primary);
+    border: none; border-radius: 6px; padding: 7px 16px;
+    font-size: 0.75rem; font-weight: 700; cursor: pointer;
+    width: 100%; letter-spacing: 0.04em;
+    transition: background .2s;
+  }
+  .handoff-card .hc-btn:hover { background: #d4b47a; }
+
+  .chat-footer {
+    background: white;
+    border-top: 1px solid rgba(26,39,68,0.08);
+  }
+  .chat-input {
+    flex: 1; border: 1.5px solid rgba(26,39,68,0.12);
+    border-radius: 24px; padding: 9px 16px;
+    font-size: 0.84rem; font-family: 'Inter', sans-serif;
+    outline: none; transition: border .2s; background: var(--chat-bg);
+    color: var(--primary);
+  }
+  .chat-input:focus { border-color: var(--accent); background: white; }
+  .chat-send {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--primary); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent); transition: all .2s; flex-shrink: 0;
+  }
+  .chat-send:hover { background: #243159; transform: scale(1.08); }
+  .chat-send .material-icons { font-size: 18px; }
+  .chat-send:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+  .chat-branding {
+    text-align: center; padding: 8px;
+    font-size: 0.65rem; color: var(--text-muted);
+    background: white; letter-spacing: 0.04em;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--primary); color: white;
+    padding: 60px 0 30px; margin-top: 80px;
+  }
+  footer .logo-text { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--accent); }
+  footer p { font-size: 0.82rem; color: rgba(255,255,255,0.5); }
+  .footer-heading {
+    color: var(--accent);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+  }
+  .footer-link {
+    color: rgba(255,255,255,0.55);
+    font-size: 0.82rem;
+  }
+  .footer-link:hover,
+  .footer-link:focus {
+    color: white;
+  }
+
+  /* utils */
+  section { padding: 90px 0; }
+  .bg-cream { background: #f8f6f2; }
+
+  @media (max-width: 576px) {
+    .chat-panel { width: calc(100vw - 20px); right: 10px; bottom: 90px; }
+  }
+
+  @media (max-width: 767.98px) {
+    .hero-stats { display: none !important; }
+    .site-nav .navbar-collapse {
+      background: rgba(248,246,242,0.96);
+      border: 1px solid rgba(201,169,110,0.2);
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin-top: 12px;
+      box-shadow: 0 12px 36px rgba(26,39,68,0.12);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .site-nav .navbar-nav {
+      align-items: center;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar navbar-expand-md site-nav py-3 px-3 px-md-4 px-lg-5">
+  <div class="container-fluid px-0">
+    <a class="navbar-brand site-brand d-flex align-items-center gap-2 mb-0" href="#">
+      <svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="38" height="38" rx="8" fill="#1a2744"/>
+        <text x="19" y="26" text-anchor="middle" font-family="Georgia,serif" font-size="15" font-weight="700" fill="#c9a96e">RD</text>
+      </svg>
+      <span>RD Realty Group</span>
+    </a>
+    <button class="navbar-toggler border-0 p-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav" aria-controls="siteNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="material-icons d-flex align-items-center justify-content-center">menu</span>
+    </button>
+    <div class="collapse navbar-collapse mt-3 mt-md-0" id="siteNav">
+      <ul class="navbar-nav ms-md-auto gap-2 gap-md-4">
+        <li class="nav-item"><a class="nav-link px-0" href="#home">Home</a></li>
+        <li class="nav-item"><a class="nav-link px-0" href="#buy">Buy</a></li>
+        <li class="nav-item"><a class="nav-link px-0" href="#sell">Sell</a></li>
+        <li class="nav-item"><a class="nav-link px-0" href="#listings">Listings</a></li>
+        <li class="nav-item"><a class="nav-link px-0" href="#team">Meet the Team</a></li>
+        <li class="nav-item"><a class="nav-link px-0" href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero d-flex align-items-center position-relative overflow-hidden" id="home">
+  <div class="container-fluid px-3 px-sm-4 px-lg-5">
+    <div class="hero-inner text-white">
+      <div class="hero-eyebrow mb-3 mb-md-4">RD Realty Group · Est. 2008</div>
+      <h1 class="mb-4 text-white">Your <em>next chapter</em> starts with the right conversation.</h1>
+      <p class="mb-4 mb-md-5">Whether you're ready to buy your dream home or sell for the best price, our specialized team guides every step. Start with a quick chat — we'll connect you to the right expert.</p>
+      <div class="hero-cta d-flex flex-wrap gap-3">
+        <a href="#team" class="btn-gold d-inline-flex align-items-center gap-2">
+          <span class="material-icons lh-1">people</span>
+          Meet Our Team
+        </a>
+        <a href="#how" class="btn-outline-white">How It Works</a>
+      </div>
+    </div>
+  </div>
+  <div class="hero-stats d-none d-md-flex gap-5">
+    <div class="stat"><div class="stat-num">1,400+</div><div class="stat-label">Homes Sold</div></div>
+    <div class="stat"><div class="stat-num">96%</div><div class="stat-label">Satisfaction</div></div>
+    <div class="stat"><div class="stat-num">16yr</div><div class="stat-label">In Business</div></div>
+  </div>
+</section>
+
+<!-- AGENTS -->
+<section id="team" class="bg-white">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="section-label mb-3">Specialized Experts</div>
+      <h2 class="section-title mb-3">Meet the team behind<br>every successful transaction</h2>
+      <p class="section-copy text-muted mx-auto mb-0">Each specialist owns a distinct phase of your journey — from your very first question to handing over the keys.</p>
+    </div>
+    <div class="row g-4">
+      <!-- 8 agents -->
+      <div class="col-sm-6 col-lg-3">
+        <div class="agent-card">
+          <div class="agent-avatar">JC</div>
+          <div class="agent-name">Jordan Calloway</div>
+          <div class="agent-role">Client Intake Specialist</div>
+          <div class="agent-desc">First point of contact. Understands your goals and connects you with the right specialist to begin your journey.</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3" id="buy">
+        <div class="agent-card">
+          <div class="agent-avatar">MM</div>
+          <div class="agent-name">Maya Mitchell</div>
+          <div class="agent-role">Buyer Readiness Advisor</div>
+          <div class="agent-desc">Prepares buyers for the market — covering pre-approval, budgeting, wish lists, and what to expect before touring homes.</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3" id="sell">
+        <div class="agent-card">
+          <div class="agent-avatar">TN</div>
+          <div class="agent-name">Travis Nguyen</div>
+          <div class="agent-role">Seller Preparation Advisor</div>
+          <div class="agent-desc">Helps sellers prepare homes for listing — staging tips, pricing strategy, and what to expect during the selling process.</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="agent-card">
+          <div class="agent-avatar">PW</div>
+          <div class="agent-name">Priya Wallace</div>
+          <div class="agent-role">Buyer's Agent</div>
+          <div class="agent-desc">Guides buyers through search, showings, offer strategy, and negotiations to secure the best deal.</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3" id="listings">
+        <div class="agent-card">
+          <div class="agent-avatar">RB</div>
+          <div class="agent-name">Rafael Beckett</div>
+          <div class="agent-role">Listing Agent</div>
+          <div class="agent-desc">Markets and sells your property. Manages listing strategy, showings, open houses, and seller-side negotiations.</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="agent-card">
+          <div class="agent-avatar">LF</div>
+          <div class="agent-name">Lena Forsythe</div>
+          <div class="agent-role">Mortgage & Finance Liaison</div>
+          <div class="agent-desc">Bridges clients with lending partners. Explains loan types, qualification requirements, and helps navigate financing.</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="agent-card">
+          <div class="agent-avatar">DK</div>
+          <div class="agent-name">Derek Kwan</div>
+          <div class="agent-role">Transaction Coordinator</div>
+          <div class="agent-desc">Manages all paperwork, timelines, inspections, and compliance from offer acceptance through closing day.</div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="agent-card">
+          <div class="agent-avatar">AS</div>
+          <div class="agent-name">Amara Stevens</div>
+          <div class="agent-role">After-Close Concierge</div>
+          <div class="agent-desc">Supports clients post-close — utility setup, contractor referrals, move-in checklists, and community orientation.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="bg-cream">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-5">
+        <div class="section-label mb-3">Seamless Process</div>
+        <h2 class="section-title mb-0">How our AI concierge connects you to the right expert</h2>
+        <p class="process-copy text-muted mt-3 mb-0">No waiting on hold. No being passed around. Our AI understands your situation and routes you directly to the specialist who can help most — instantly.</p>
+      </div>
+      <div class="col-lg-6 offset-lg-1">
+        <div class="d-flex flex-column gap-4">
+          <div class="d-flex align-items-start gap-3 gap-md-4">
+            <div class="step-num d-flex align-items-center justify-content-center flex-shrink-0">1</div>
+            <div class="step-text flex-grow-1">
+              <h5>Tell us what you're looking for</h5>
+              <p>Buying, selling, or just exploring? The AI identifies your stage and intent from a natural conversation — no forms to fill.</p>
+            </div>
+          </div>
+          <div class="d-flex align-items-start gap-3 gap-md-4">
+            <div class="step-num d-flex align-items-center justify-content-center flex-shrink-0">2</div>
+            <div class="step-text flex-grow-1">
+              <h5>Get prepared with the right questions</h5>
+              <p>The AI asks smart qualifying questions about timeline, budget, and readiness — the same things our agents would ask first.</p>
+            </div>
+          </div>
+          <div class="d-flex align-items-start gap-3 gap-md-4">
+            <div class="step-num d-flex align-items-center justify-content-center flex-shrink-0">3</div>
+            <div class="step-text flex-grow-1">
+              <h5>Get matched to your specialist</h5>
+              <p>Based on your answers, you're introduced to exactly the right team member — with context already shared so you don't repeat yourself.</p>
+            </div>
+          </div>
+          <div class="d-flex align-items-start gap-3 gap-md-4">
+            <div class="step-num d-flex align-items-center justify-content-center flex-shrink-0">4</div>
+            <div class="step-text flex-grow-1">
+              <h5>Connect on your terms</h5>
+              <p>Schedule a call, start a chat, or get an email — whatever works for you. Your specialist is ready with your information in hand.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container" id="contact">
+    <div class="row g-4 mb-4">
+      <div class="col-md-4 mb-4 mb-md-0">
+        <div class="logo-text mb-2">RD Realty Group</div>
+        <p class="mb-0">Helping families find home since 2008. Licensed in all 50 states.</p>
+      </div>
+      <div class="col-md-2">
+        <div class="footer-heading text-uppercase fw-semibold mb-3">Services</div>
+        <div class="d-flex flex-column gap-2">
+          <a href="#" class="footer-link text-decoration-none">Buy a Home</a>
+          <a href="#" class="footer-link text-decoration-none">Sell a Home</a>
+          <a href="#" class="footer-link text-decoration-none">Home Valuation</a>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="footer-heading text-uppercase fw-semibold mb-3">Company</div>
+        <div class="d-flex flex-column gap-2">
+          <a href="#" class="footer-link text-decoration-none">Our Team</a>
+          <a href="#" class="footer-link text-decoration-none">About Us</a>
+          <a href="#" class="footer-link text-decoration-none">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="border-top border-white border-opacity-10 pt-4">
+      <p class="mb-0">© 2026 RD Realty Group. All rights reserved.</p>
+      <p class="mb-0">Product Strategy, Visual Design and Development by Ramona Dsouza</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ── FAB ── -->
+<div class="fab-wrapper d-flex flex-column align-items-end gap-3">
+  <div class="fab-label" id="fabLabel">RD Live Agent</div>
+  <button class="fab-btn d-flex align-items-center justify-content-center" id="fabBtn" aria-label="Open chat">
+    <span class="material-icons" id="fabIcon">chat</span>
+    <div class="fab-pulse"></div>
+  </button>
+</div>
+
+<!-- ── CHAT PANEL ── -->
+<div class="chat-panel d-flex flex-column" id="chatPanel">
+  <div class="chat-header d-flex align-items-center gap-3 px-4 py-3">
+    <div class="chat-header-avatar d-flex align-items-center justify-content-center flex-shrink-0">
+      <svg width="24" height="24" viewBox="0 0 38 38" fill="none">
+        <rect width="38" height="38" rx="8" fill="rgba(201,169,110,0.3)"/>
+        <text x="19" y="26" text-anchor="middle" font-family="Georgia,serif" font-size="14" font-weight="700" fill="#c9a96e">RD</text>
+      </svg>
+    </div>
+    <div class="chat-header-info flex-grow-1">
+      <div class="chat-header-name">RD Live Agent</div>
+      <div class="chat-header-status d-flex align-items-center gap-1">
+        <span class="status-dot"></span> Online now
+      </div>
+    </div>
+    <button class="chat-header-close d-flex align-items-center" id="closeChat">
+      <span class="material-icons">close</span>
+    </button>
+  </div>
+  <div class="chat-agent-strip d-flex align-items-center gap-2 px-3 py-2" id="agentStrip">
+    Chatting with <strong>Jordan Calloway</strong> · Client Intake Specialist
+  </div>
+  <div class="chat-messages d-flex flex-column gap-3 p-3" id="chatMessages"></div>
+  <div class="quick-replies d-flex flex-wrap gap-2 px-3 pb-3" id="quickReplies"></div>
+  <div class="chat-footer d-flex align-items-center gap-2 px-3 py-3">
+    <input type="text" class="chat-input" id="chatInput" placeholder="Type your message…" autocomplete="off">
+    <button class="chat-send d-flex align-items-center justify-content-center flex-shrink-0" id="sendBtn">
+      <span class="material-icons">send</span>
+    </button>
+  </div>
+  <div class="chat-branding">Powered by RD Realty Group · AI-assisted routing</div>
+</div>
+
+<script>
+// ── TEAM DATA ──
+const AGENTS = {
+  intake:       { name: "Jordan Calloway",  role: "Client Intake Specialist",     initials: "JC" },
+  buyerPrep:    { name: "Maya Mitchell",    role: "Buyer Readiness Advisor",       initials: "MM" },
+  sellerPrep:   { name: "Travis Nguyen",    role: "Seller Preparation Advisor",    initials: "TN" },
+  buyerAgent:   { name: "Priya Wallace",    role: "Buyer's Agent",                 initials: "PW" },
+  listingAgent: { name: "Rafael Beckett",   role: "Listing Agent",                 initials: "RB" },
+  finance:      { name: "Lena Forsythe",    role: "Mortgage & Finance Liaison",    initials: "LF" },
+  transaction:  { name: "Derek Kwan",       role: "Transaction Coordinator",       initials: "DK" },
+  afterClose:   { name: "Amara Stevens",    role: "After-Close Concierge",         initials: "AS" }
+};
+
+// ── STATE ──
+let conversationHistory = [];
+let currentAgent = AGENTS.intake;
+let isOpen = false;
+let isThinking = false;
+
+// ── DOM ──
+const fabBtn = document.getElementById('fabBtn');
+const fabIcon = document.getElementById('fabIcon');
+const fabLabel = document.getElementById('fabLabel');
+const chatPanel = document.getElementById('chatPanel');
+const closeChat = document.getElementById('closeChat');
+const chatMessages = document.getElementById('chatMessages');
+const chatInput = document.getElementById('chatInput');
+const sendBtn = document.getElementById('sendBtn');
+const quickReplies = document.getElementById('quickReplies');
+const agentStrip = document.getElementById('agentStrip');
+
+// ── FAB TOGGLE ──
+fabBtn.addEventListener('click', () => {
+  isOpen = !isOpen;
+  chatPanel.classList.toggle('active', isOpen);
+  fabBtn.classList.toggle('open', isOpen);
+  fabIcon.textContent = isOpen ? 'close' : 'chat';
+  fabLabel.style.display = isOpen ? 'none' : 'block';
+  if (isOpen && conversationHistory.length === 0) initChat();
+});
+closeChat.addEventListener('click', () => {
+  isOpen = false;
+  chatPanel.classList.remove('active');
+  fabBtn.classList.remove('open');
+  fabIcon.textContent = 'chat';
+  fabLabel.style.display = 'block';
+});
+
+// ── INIT CHAT ──
+function initChat() {
+  conversationHistory = [];
+  sendToAPI("Hello, I'm interested in RD Realty Group. Can you help me?", false);
+}
+
+// ── RENDER MESSAGE ──
+function renderMessage(role, text, agentInitials) {
+  const msgDiv = document.createElement('div');
+  msgDiv.className = `msg ${role === 'user' ? 'user' : 'bot'}`;
+
+  const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  if (role === 'bot') {
+    const avatar = document.createElement('div');
+    avatar.className = 'msg-avatar';
+    avatar.textContent = agentInitials || 'JC';
+    msgDiv.appendChild(avatar);
+  }
+
+  const inner = document.createElement('div');
+  inner.className = 'd-flex flex-column gap-1';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  bubble.innerHTML = formatText(text);
+
+  const time = document.createElement('div');
+  time.className = 'msg-time';
+  time.textContent = now;
+
+  inner.appendChild(bubble);
+  inner.appendChild(time);
+  msgDiv.appendChild(inner);
+
+  chatMessages.appendChild(msgDiv);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  return bubble;
+}
+
+function formatText(text) {
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\n/g, '<br>');
+}
+
+// ── TYPING INDICATOR ──
+let typingEl = null;
+function showTyping() {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'msg bot';
+  wrapper.id = 'typingWrapper';
+  const avatar = document.createElement('div');
+  avatar.className = 'msg-avatar';
+  avatar.textContent = currentAgent.initials;
+  const indicator = document.createElement('div');
+  indicator.className = 'typing-indicator';
+  indicator.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+  wrapper.appendChild(avatar);
+  wrapper.appendChild(indicator);
+  chatMessages.appendChild(wrapper);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  typingEl = wrapper;
+}
+function hideTyping() {
+  if (typingEl) { typingEl.remove(); typingEl = null; }
+}
+
+// ── QUICK REPLIES ──
+function setQuickReplies(options) {
+  quickReplies.innerHTML = '';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'quick-reply-btn';
+    btn.textContent = opt;
+    btn.addEventListener('click', () => {
+      setQuickReplies([]);
+      handleUserMessage(opt);
+    });
+    quickReplies.appendChild(btn);
+  });
+}
+
+// ── ROUTE HANDLER ──
+function handleRoute(agentKey) {
+  const agent = AGENTS[agentKey];
+  if (!agent) return;
+  currentAgent = agent;
+
+  // update strip
+  agentStrip.innerHTML = `Now connecting with <strong>${agent.name}</strong> · ${agent.role}`;
+
+  // render handoff card
+  const cardWrapper = document.createElement('div');
+  cardWrapper.className = 'msg bot';
+  const avatar = document.createElement('div');
+  avatar.className = 'msg-avatar';
+  avatar.textContent = agent.initials;
+  const card = document.createElement('div');
+  card.className = 'handoff-card';
+  card.innerHTML = `
+    <div class="hc-label">Connecting you with</div>
+    <div class="hc-name">${agent.name}</div>
+    <div class="hc-role">${agent.role}</div>
+    <button class="hc-btn" onclick="alert('${agent.name} will follow up with you within 30 minutes. Thank you!')">
+      Schedule a Call with ${agent.name.split(' ')[0]} →
+    </button>
+  `;
+  cardWrapper.appendChild(avatar);
+  cardWrapper.appendChild(card);
+  chatMessages.appendChild(cardWrapper);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+
+  setQuickReplies(['Ask another question', 'I have more details to share']);
+}
+
+// ── PARSE BOT RESPONSE ──
+function parseBotResponse(raw) {
+  const routeMatch = raw.match(/ROUTE:\s*(\{[\s\S]*\})\s*$/m);
+  let agentKey = null;
+  if (routeMatch) {
+    try {
+      const parsed = JSON.parse(routeMatch[1]);
+      agentKey = parsed.agent;
+    } catch(e) {}
+  }
+  const cleaned = raw.replace(/\s*ROUTE:\s*\{[\s\S]*\}\s*$/m, '').trim();
+  return { text: cleaned, agentKey };
+}
+
+// ── SEND TO API ──
+async function sendToAPI(userText, addToHistory = true) {
+  if (isThinking) return;
+  isThinking = true;
+  sendBtn.disabled = true;
+
+  if (addToHistory) {
+    conversationHistory.push({ role: "user", content: userText });
+    renderMessage('user', userText);
+  }
+
+  const messagesToSend = addToHistory ? conversationHistory : [...conversationHistory, { role: "user", content: userText }];
+  setQuickReplies([]);
+  showTyping();
+
+  try {
+    const response = await fetch("/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: messagesToSend })
+    });
+
+    const data = await response.json();
+    hideTyping();
+
+    const rawText = response.ok ? (data.reply || "I'm sorry, I had trouble responding. Please try again.") : (data.reply || "I'm having a connection issue right now. Please try again in a moment.");
+    const { text, agentKey } = parseBotResponse(rawText);
+
+    if (!addToHistory) {
+      conversationHistory.push({ role: "user", content: userText });
+      renderMessage('user', userText);
+    }
+    conversationHistory.push({ role: "assistant", content: rawText });
+
+    renderMessage('bot', text, currentAgent.initials);
+
+    if (agentKey) {
+      setTimeout(() => handleRoute(agentKey), 600);
+    } else {
+      // show contextual quick replies based on conversation stage
+      const lower = text.toLowerCase();
+      if (lower.includes('buy') && lower.includes('sell') && conversationHistory.length < 4) {
+        setQuickReplies(['I want to buy a home', 'I want to sell my home', 'Both — buy and sell']);
+      } else if (lower.includes('pre-approv') || lower.includes('financing')) {
+        setQuickReplies(['Yes, I\'m pre-approved', 'Not yet, still exploring', 'I have questions about financing']);
+      } else if (lower.includes('timeline') || lower.includes('when')) {
+        setQuickReplies(['As soon as possible', 'Within 3–6 months', 'Just exploring for now']);
+      }
+    }
+
+  } catch (err) {
+    hideTyping();
+    renderMessage('bot', "I'm having a connection issue right now. Please try again in a moment.", 'JC');
+    console.error(err);
+  }
+
+  isThinking = false;
+  sendBtn.disabled = false;
+  chatInput.focus();
+}
+
+// ── USER INPUT ──
+function handleUserMessage(text) {
+  const trimmed = text.trim();
+  if (!trimmed || isThinking) return;
+  chatInput.value = '';
+  sendToAPI(trimmed);
+}
+
+sendBtn.addEventListener('click', () => handleUserMessage(chatInput.value));
+chatInput.addEventListener('keypress', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    handleUserMessage(chatInput.value);
+  }
+});
+
+// show label briefly then hide
+setTimeout(() => {
+  fabLabel.style.opacity = '0';
+  fabLabel.style.transition = 'opacity 0.5s';
+  setTimeout(() => {
+    fabLabel.style.display = 'none';
+    fabLabel.style.opacity = '1';
+  }, 500);
+  // bring it back on hover
+  fabBtn.addEventListener('mouseenter', () => {
+    if (!isOpen) {
+      fabLabel.style.display = 'block';
+      fabLabel.style.opacity = '1';
+    }
+  });
+  fabBtn.addEventListener('mouseleave', () => {
+    if (!isOpen) {
+      fabLabel.style.opacity = '0';
+      setTimeout(() => { if (!isOpen) fabLabel.style.display = 'none'; }, 300);
+    }
+  });
+}, 3500);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
