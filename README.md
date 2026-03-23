@@ -1,6 +1,6 @@
-# Routing AI — Live Agent, intake system LLM, converts anonymous visitors into qualified leads
+# Routing AI — Live Agent
 
-Process details reserved for live walkthroughs. Happy to share deeper thinking and decisions in conversation.
+This is an intake system LLM, that converts anonymous visitors into qualified leads. Process details reserved for live walkthroughs. Happy to share deeper thinking and decisions in conversation.
 
 ## Requirements
 
