@@ -13,7 +13,7 @@ app = Flask(__name__)
 CORS(app)
 
 API_KEY = os.getenv("API_KEY")
-MODEL_NAME = os.getenv("MODEL_NAME", "claude-sonnet-4-20250514")
+MODEL_NAME = os.getenv("MODEL_NAME", "claude-sonnet-5-5")
 API_BASE_URL = os.getenv("API_BASE_URL", "https://api.anthropic.com/v1/messages")
 
 # System prompt: Jordan Calloway, Client Intake Specialist
